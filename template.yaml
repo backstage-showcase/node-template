@@ -1,0 +1,91 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
+kind: Template
+metadata:
+  tags:
+    - golden-path
+    - azure
+    - appservice
+  name: node-js-app-service
+  title: Node JS Application on App Service
+  description: The Logikfabriken way of building and deploying Node Applications on Azure App Service
+spec:
+  owner: group:unicorns
+  type: service
+
+  parameters:
+    - title: Provide information about component
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the component
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+        owner:
+          type: string
+          ui:field: MyGroupsPicker
+          ui:options:
+            allowedKinds:
+              - Group
+              - User
+            catalogFilter: []
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+            allowedOrganizations:
+              - backstage-showcase
+            allowedOwners:
+              - backstage-showcase
+            allowedProjects: []
+            allowedRepos: []
+            requestUserCredentials:
+              additionalScopes:
+                gitea: []
+                gerrit: []
+                github: []
+                gitlab: []
+                bitbucket: []
+                azure: []
+              secretsKey: secret
+  steps:
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./content
+        values:
+          name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
