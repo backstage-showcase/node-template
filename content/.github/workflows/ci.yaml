@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  showcase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Display environment info
+        run: |
+          echo "Running on $(uname -a)"
+          echo "Current directory: $(pwd)"
+          echo "Listing files in the repo:"
+          ls -la
+
+      - name: Run a sample command
+        run: |
+          echo "Hello, GitHub Actions!"
+          date
+
+      - name: Simulate a test
+        run: |
+          echo "Running tests..."
+          sleep 2
+          echo "All tests passed! ✅"
+
+      - name: Final step
+        run: |
+          echo "CI run completed successfully! 🎉"

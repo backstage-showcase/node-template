@@ -2,6 +2,9 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ${{ values.name | dump }}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: backstage-showcase/${{ values.name | dump }}
 spec:
   type: service
   owner: ${{ values.owner | dump }}
