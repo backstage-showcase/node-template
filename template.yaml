@@ -76,6 +76,8 @@ spec:
           - github.com
         description: This is ${{ parameters.name }}
         repoUrl: ${{ parameters.repoUrl }}
+        repoVisibility: public
+
     - id: register
       name: Register
       action: catalog:register
